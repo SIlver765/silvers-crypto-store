@@ -20,12 +20,12 @@ services:
       APP_PORT: 3000
 
   web:
-    # Pinned to the v1.0-Alpha6 build's exact digest (not :latest) so the
+    # Pinned to the v1.0-Alpha7 build's exact digest (not :latest) so the
     # platform is forced to pull this specific image instead of reusing
     # whatever it already has cached under a floating tag. Update this
     # digest (see ../.github/workflows/publish-images.yml) every time a new
     # version is published.
-    image: ghcr.io/silver765/triple-x-app@sha256:6d8b51ee286e80fe0660768485e26cb6ad622225b83664679e36e368cde864c2
+    image: ghcr.io/silver765/triple-x-app@sha256:98810859bf2b70871362c635f99cadc623eaf5309e7ded81ef0ea3174562d3fc
     restart: on-failure
     stop_grace_period: 1m
     volumes:
@@ -74,8 +74,8 @@ services:
       MONERO_WALLET_STATE_FILE: /data/state/monero-wallet.json
 
   monerod:
-    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-monerod@sha256:bd1e34e8f14d4956fe734ba8f1ed75d14e3739eceec23448a7ed175173c6f915
+    # Pinned to the v1.0-Alpha7 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-monerod@sha256:0e2b8a7462e01595e74ba06f1a6396c6923ca5b56bdf8a8930642d20490eef40
     restart: on-failure
     stop_grace_period: 1m
     command:
@@ -105,10 +105,10 @@ services:
   # --disable-rpc-login - never published to the host (no `ports:` here),
   # same internal-network-only trust boundary monerod's own RPC relies on.
   monero-wallet-rpc:
-    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's
+    # Pinned to the v1.0-Alpha7 build's exact digest - see note on web's
     # image above. Shares docker/monerod/Dockerfile's builder stage with
     # monerod itself, just a different final target.
-    image: ghcr.io/silver765/triple-x-monero-wallet-rpc@sha256:7c5ac4836bb070af2a4b4520378626dccb8ccd0906455b6ddb5ba05e6f7a1dd0
+    image: ghcr.io/silver765/triple-x-monero-wallet-rpc@sha256:9b9a02c48a210275a595a94dc1408d9b556e4362fbdcef832160c949a329f3ac
     restart: on-failure
     stop_grace_period: 1m
     depends_on:
@@ -126,8 +126,8 @@ services:
       - ${APP_DATA_DIR}/monero-wallet:/home/monero/wallet-data
 
   p2pool:
-    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-p2pool@sha256:9c294a9cd439d870cb0d75aa4a9b18f3e9078791483427d84d63f8c20d2cd0e8
+    # Pinned to the v1.0-Alpha7 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-p2pool@sha256:228776137b049ca6938746b9c3470e8ae434f31c3766a2664045533922ab666d
     restart: on-failure
     stop_grace_period: 1m
     environment:
@@ -177,10 +177,17 @@ services:
     # every time (confirmed directly in the container's own startup log:
     # "base folder (in container): /var/tari/node" printed before our args
     # are even applied). Our volumes below target that fixed path instead.
+    # No --init - contrary to what its name suggests, this isn't
+    # "bootstrap config if missing, then keep running": every run with
+    # --init prints "Default configuration created. Done." and exits
+    # clean (confirmed directly from a user's live logs - monerod and
+    # p2pool stayed healthy while this one repeatedly exited seconds
+    # after starting, with restart:on-failure just relaunching it into
+    # the same exit forever). The node creates its own default config/
+    # identity on first run without this flag regardless.
     command:
       - "--network=mainnet"
       - "--non-interactive"
-      - "--init"
       - "-p"
       - "base_node.grpc_enabled=true"
       - "-p"
@@ -214,8 +221,8 @@ services:
       - ${APP_DATA_DIR}/minotari-logs:/var/tari/node/mainnet/log
 
   minotari-wallet:
-    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-minotari-wallet@sha256:6a08e4591bb319cde317902837b625340757af75d8536ec9807780efb46f6a6c
+    # Pinned to the v1.0-Alpha7 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-minotari-wallet@sha256:bc99a5673b283c395bdd6b2962756ff54766ebd14f863c802eb9d8a77bfcaf84
     restart: on-failure
     stop_grace_period: 1m
     command:

@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha6"
+version: "v1.0-Alpha7"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,14 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha7: fixes Tari merge-mining's minotari-node container failing to
+  stay running two different ways - a comma-parsing bug in its gRPC
+  allow-methods list caused an instant crash loop, and (once that was fixed)
+  the --init flag turned out to be a one-shot "write default config and
+  exit" action rather than "bootstrap then keep running," causing it to exit
+  clean and restart forever. Either bug alone could leave the node stuck
+  restarting indefinitely, which also blocked the platform's own Stop button
+  from working. Also adds "by Silver" to the app name.
   v1.0-Alpha6: fixes Import Blockchain failing (rsync exit 12/23) when the
   remote path is a Windows drive letter (e.g. F:\folder\subfolder) - it's
   now auto-converted to the Cygwin form a Windows rsync install actually
