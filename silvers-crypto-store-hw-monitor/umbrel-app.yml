@@ -1,0 +1,27 @@
+manifestVersion: 1
+id: silvers-crypto-store-hw-monitor
+category: developer
+name: Silver's HW Monitor
+version: "1.4.0"
+tagline: CPU, RAM, storage stats and fan control for your home server
+description: >-
+  Silver's HW Monitor is a lightweight dashboard for umbrelOS / 5tratumOS that shows
+  live CPU temperature and usage, RAM usage, and per-drive storage usage and temperature.
+  It also lets you control PWM fan speed directly (silent/balanced/performance presets,
+  or a manual percentage) on motherboards whose sensor chip is supported by the host's
+  hwmon/lm-sensors kernel drivers.
+
+
+  Source: https://github.com/SIlver765/silvers-hw-monitor
+developer: SIlver765
+website: https://github.com/SIlver765/silvers-hw-monitor
+dependencies: []
+repo: https://github.com/SIlver765/silvers-hw-monitor
+support: https://github.com/SIlver765/silvers-hw-monitor/issues
+port: 3300
+icon: "https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-hw-monitor/icon.svg"
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+submitter: SIlver765
+submission: https://github.com/SIlver765/silvers-crypto-store

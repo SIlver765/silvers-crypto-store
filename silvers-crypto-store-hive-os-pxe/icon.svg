@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <rect x="3" y="3" width="250" height="250" rx="56" fill="#14161a" stroke="#f5a623" stroke-width="6"/>
+  <g fill="none" stroke="#f5a623" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="72" y="52" width="112" height="72" rx="10"/>
+    <path d="M128 124v36M128 160H70v28M128 160h58v28M128 160v28"/>
+  </g>
+  <g fill="#f5a623"><rect x="52" y="188" width="36" height="24" rx="5"/><rect x="110" y="188" width="36" height="24" rx="5"/><rect x="168" y="188" width="36" height="24" rx="5"/></g>
+  <text x="128" y="98" font-family="system-ui,sans-serif" font-size="34" font-weight="700" fill="#f5a623" text-anchor="middle">PXE</text>
+</svg>

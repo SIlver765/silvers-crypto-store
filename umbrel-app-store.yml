@@ -1,0 +1,9 @@
+# Umbrel (and 5tratumOS, which runs the same app framework) community app
+# store manifest. `id` prefixes every app folder in this repo; `name` is
+# what shows up in the App Stores UI once someone adds this repo's URL.
+#
+# Add this store on umbrelOS/5tratumOS via:
+#   Settings -> App Store -> Community App Stores -> Add store
+#   https://github.com/SIlver765/silvers-crypto-store
+id: silvers-crypto-store
+name: Silver's Crypto Store

@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: silvers-crypto-store-hw-monitor_web_1
+      APP_PORT: 3300
+
+  web:
+    image: ghcr.io/silver765/silvers-hw-monitor:1.4.0
+    restart: on-failure
+    # Reading temps only needs /sys mounted (Docker already exposes host sysfs read-only
+    # by default). Writing fan speed needs read-write access to the hwmon PWM files, and
+    # (on hardware without hwmon fan control, e.g. many HP laptops) to the ACPI cooling
+    # device cur_state files under /sys/class/thermal.
+    volumes:
+      - /sys/class/hwmon:/sys/class/hwmon:rw
+      - /sys/class/thermal:/sys/class/thermal:rw
+    cap_add:
+      - SYS_RAWIO
+    environment:
+      PORT: "3300"

@@ -1,0 +1,232 @@
+version: "3.7"
+
+# This is the Umbrel/5tratumOS-flavored compose file - it follows the
+# platform's conventions (app_proxy, ${APP_DATA_DIR} bind mounts, prebuilt
+# images instead of `build:`) rather than the plain-Docker one at the repo
+# root. See ../README.md "Umbrel / 5tratumOS community app store install"
+# for the full picture, including how images get built and published.
+#
+# Every `image:` below should be pinned to a `@sha256:<digest>` once
+# published (see ../.github/workflows/publish-images.yml) - Umbrel's own
+# apps all do this so an update can't silently change what's running.
+
+services:
+  app_proxy:
+    environment:
+      # "<app-id>_<service-name>_1" - the trailing "_1" is required by
+      # Umbrel's proxy convention, even though this app only ever runs one
+      # replica of each service.
+      APP_HOST: silvers-crypto-store-triple-x_web_1
+      APP_PORT: 3000
+
+  web:
+    # Pinned to the v1.0-Alpha6 build's exact digest (not :latest) so the
+    # platform is forced to pull this specific image instead of reusing
+    # whatever it already has cached under a floating tag. Update this
+    # digest (see ../.github/workflows/publish-images.yml) every time a new
+    # version is published.
+    image: ghcr.io/silver765/triple-x-app@sha256:6d8b51ee286e80fe0660768485e26cb6ad622225b83664679e36e368cde864c2
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      - ${APP_DATA_DIR}/config:/data/config
+      - ${APP_DATA_DIR}/p2pool-api:/data/p2pool-api:ro
+      - ${APP_DATA_DIR}/p2pool-logs:/data/p2pool-logs:ro
+      - ${APP_DATA_DIR}/monerod-logs:/data/monerod-logs:ro
+      - ${APP_DATA_DIR}/minotari-logs:/data/minotari-logs:ro
+      - ${APP_DATA_DIR}/state:/data/state
+      # Read-write (not :ro) - the Wallet tab's one-time Tari seed reveal
+      # deletes seed-words.txt from this volume right after showing it once.
+      - ${APP_DATA_DIR}/minotari-wallet:/data/minotari-wallet
+      # Settings tab's (hidden, opt-in) "Import Blockchain" feature - see
+      # ../app/lib/dockerControl.js and ../app/lib/blockchainImport.js. Needs
+      # to stop/start monerod around the copy (writing into a live LMDB
+      # environment risks corrupting it) and write the imported data
+      # straight into the same host path monerod itself reads from.
+      # SECURITY NOTE: mounting the Docker socket gives this container the
+      # same control over the host as root. Off by default
+      # (importBlockchainEnabled setting) for exactly this reason - only
+      # keep this mount if you intend to use that feature.
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${APP_DATA_DIR}/monerod:/data/monerod-import-target
+    environment:
+      PORT: "3000"
+      # Plain service name - Compose gives every service in this project a DNS
+      # alias equal to its name on the project's own network, regardless of
+      # how the platform names/cases the project itself. Only app_proxy (a
+      # separate container on 5tratumOS's shared network, outside this
+      # project) needs the fully-qualified "<app-id>_<service>_1" form above.
+      MONEROD_HOST: monerod
+      MONEROD_RPC_PORT: "18081"
+      CONFIG_DIR: /data/config
+      P2POOL_DATA_API_DIR: /data/p2pool-api
+      P2POOL_LOG_FILE: /data/p2pool-logs/p2pool.log
+      STATE_DIR: /data/state
+      P2POOL_STRATUM_PORT: "3333"
+      EXPLORER_BASE_URL: "https://xmrchain.net"
+      MONEROD_LOG_FILE: /data/monerod-logs/monerod.log
+      MINOTARI_LOG_FILE: /data/minotari-logs/base_node.log
+      MINOTARI_WALLET_HOST: minotari-wallet
+      MINOTARI_WALLET_GRPC_PORT: "18143"
+      MINOTARI_WALLET_SEED_FILE: /data/minotari-wallet/seed-words.txt
+      MONERO_WALLET_RPC_HOST: monero-wallet-rpc
+      MONERO_WALLET_RPC_PORT: "18084"
+      MONERO_WALLET_STATE_FILE: /data/state/monero-wallet.json
+
+  monerod:
+    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-monerod@sha256:bd1e34e8f14d4956fe734ba8f1ed75d14e3739eceec23448a7ed175173c6f915
+    restart: on-failure
+    stop_grace_period: 1m
+    command:
+      - "--zmq-pub=tcp://0.0.0.0:18083"
+      - "--out-peers=32"
+      - "--in-peers=64"
+      - "--add-priority-node=p2pmd.xmrvsbeast.com:18080"
+      - "--add-priority-node=nodes.hashvault.pro:18080"
+      - "--enforce-dns-checkpointing"
+      - "--enable-dns-blocklist"
+      - "--prune-blockchain"
+      - "--p2p-bind-ip=0.0.0.0"
+      - "--p2p-bind-port=18080"
+      - "--rpc-bind-ip=0.0.0.0"
+      - "--rpc-bind-port=18081"
+      - "--confirm-external-bind"
+      - "--non-interactive"
+      - "--log-file=/var/log/monerod/monerod.log"
+    ports:
+      - "18080:18080" # Monero p2p - forward this on your router for better connectivity
+    volumes:
+      - ${APP_DATA_DIR}/monerod:/home/monero/.bitmonero
+      - ${APP_DATA_DIR}/monerod-logs:/var/log/monerod
+
+  # Wallet tab's "generate-once, show-once" Monero wallet creation. Runs in
+  # --wallet-dir mode (wallets managed by name over RPC) with
+  # --disable-rpc-login - never published to the host (no `ports:` here),
+  # same internal-network-only trust boundary monerod's own RPC relies on.
+  monero-wallet-rpc:
+    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's
+    # image above. Shares docker/monerod/Dockerfile's builder stage with
+    # monerod itself, just a different final target.
+    image: ghcr.io/silver765/triple-x-monero-wallet-rpc@sha256:7c5ac4836bb070af2a4b4520378626dccb8ccd0906455b6ddb5ba05e6f7a1dd0
+    restart: on-failure
+    stop_grace_period: 1m
+    depends_on:
+      - monerod
+    command:
+      - "--wallet-dir=/home/monero/wallet-data"
+      - "--daemon-address=monerod:18081"
+      - "--rpc-bind-ip=0.0.0.0"
+      - "--rpc-bind-port=18084"
+      - "--confirm-external-bind"
+      - "--disable-rpc-login"
+      - "--non-interactive"
+      - "--log-file=/var/log/monero-wallet-rpc/wallet-rpc.log"
+    volumes:
+      - ${APP_DATA_DIR}/monero-wallet:/home/monero/wallet-data
+
+  p2pool:
+    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-p2pool@sha256:9c294a9cd439d870cb0d75aa4a9b18f3e9078791483427d84d63f8c20d2cd0e8
+    restart: on-failure
+    stop_grace_period: 1m
+    environment:
+      MONEROD_HOST: monerod
+      MONEROD_RPC_PORT: "18081"
+      MONEROD_ZMQ_PORT: "18083"
+      CONFIG_FILE: /data/config/settings.json
+      DATA_API_DIR: /data/p2pool-api
+      LOG_DIR: /data/p2pool-logs
+      # Optional Tari (XTM) merge-mining - see entrypoint.sh. Left blank,
+      # p2pool behaves exactly as before (XMR only).
+      MINOTARI_NODE_HOST: minotari-node
+      MINOTARI_NODE_GRPC_PORT: "18142"
+    ports:
+      - "3333:3333"   # stratum - point your miner here
+      - "37889:37889" # P2Pool p2p (standard)
+      - "37888:37888" # P2Pool p2p (mini)
+      - "37890:37890" # P2Pool p2p (nano)
+    volumes:
+      - ${APP_DATA_DIR}/p2pool:/home/p2pool/.p2pool
+      - ${APP_DATA_DIR}/config:/data/config
+      - ${APP_DATA_DIR}/p2pool-api:/data/p2pool-api
+      - ${APP_DATA_DIR}/p2pool-logs:/data/p2pool-logs
+
+  # Tari (XTM) merge-mining - EXPERIMENTAL, disabled by default (P2Pool only
+  # merge-mines when a Tari wallet address is set in Settings). Uses Tari's
+  # own official images rather than building from source - see
+  # ../docker/minotari-wallet/Dockerfile for why.
+  minotari-node:
+    image: ghcr.io/tari-project/minotari_node:latest-mainnet
+    restart: on-failure
+    stop_grace_period: 1m
+    # The official image's default user is non-root ("tari" - confirmed via
+    # its published manifest config), but we don't control its Dockerfile to
+    # fix this the way ../docker/minotari-wallet/Dockerfile does (USER root).
+    # ${APP_DATA_DIR}/minotari-node and .../minotari-logs are created fresh
+    # by the platform and owned by root, so "tari" can't write into them -
+    # base_node.log never gets created and the app's Logs tab just shows
+    # "waiting for the process to start" forever. Run as root to sidestep
+    # that; same simplicity-over-defense-in-depth tradeoff already made for
+    # minotari-wallet.
+    user: "0:0"
+    # No --base-path here - the image's own start_tari_app.sh wrapper
+    # already hardcodes "--base-path /var/tari/node" ahead of whatever we
+    # pass in `command`, and minotari_node rejects a duplicate --base-path
+    # outright ("cannot be used multiple times"), crash-looping instantly
+    # every time (confirmed directly in the container's own startup log:
+    # "base folder (in container): /var/tari/node" printed before our args
+    # are even applied). Our volumes below target that fixed path instead.
+    command:
+      - "--network=mainnet"
+      - "--non-interactive"
+      - "--init"
+      - "-p"
+      - "base_node.grpc_enabled=true"
+      - "-p"
+      - "base_node.grpc_address=/ip4/0.0.0.0/tcp/18142"
+      - "-p"
+      - "base_node.p2p.transport.type=tcp"
+      - "-p"
+      - "base_node.p2p.transport.tcp.listener_address=/ip4/0.0.0.0/tcp/18189"
+      - "-p"
+      # get_sync_progress added this release - lib/minotariRpc.js (the
+      # Overview tab's Minotari sync ring) calls it, and any gRPC method not
+      # in this allow-list gets rejected by the node.
+      #
+      # NO SPACES after the commas below - the official image's own
+      # start_tari_app.sh wrapper re-splits its incoming arguments on
+      # whitespace before exec'ing minotari_node, so a space-separated list
+      # like "get_version, get_tip_info, ..." gets torn into separate bare
+      # arguments ("get_tip_info," with a trailing comma, etc.), which
+      # minotari_node then rejects with "unexpected argument 'get_tip_info,'
+      # found" and exits - and with restart:on-failure, Docker just restarts
+      # it into the same crash forever. Confirmed directly from a user's
+      # compose logs: minotari-node was crash-looping on exactly this while
+      # monerod and p2pool were both healthy, and the endless restart loop
+      # was what left the platform's own app status stuck on "Starting" and
+      # blocked its Stop button.
+      - "base_node.grpc_server_allow_methods=get_version,get_tip_info,get_sync_progress,identify,get_network_state,list_headers,get_tokens_in_circulation,get_network_difficulty,get_new_block_template,get_new_block,get_new_block_with_coinbases,get_new_block_template_with_coinbases,get_new_block_blob,submit_block,submit_block_blob,submit_transaction,search_kernels,search_utxos,fetch_matching_utxos,transaction_state,list_connected_peers,get_mempool_stats"
+    ports:
+      - "18189:18189" # Tari p2p - forward this on your router for better connectivity
+    volumes:
+      - ${APP_DATA_DIR}/minotari-node:/var/tari/node
+      - ${APP_DATA_DIR}/minotari-logs:/var/tari/node/mainnet/log
+
+  minotari-wallet:
+    # Pinned to the v1.0-Alpha6 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-minotari-wallet@sha256:6a08e4591bb319cde317902837b625340757af75d8536ec9807780efb46f6a6c
+    restart: on-failure
+    stop_grace_period: 1m
+    command:
+      - "--base-path=/tari-data"
+      - "--network=mainnet"
+      - "--non-interactive"
+      - "--grpc-enabled"
+      - "--grpc-address=/ip4/0.0.0.0/tcp/18143"
+      # Only written once, on first-ever wallet creation - the app container
+      # reads this file exactly once via the Wallet tab's "Reveal Seed
+      # Phrase" and deletes it immediately after. See lib/tariWallet.js.
+      - "--seed-words-file-name=/tari-data/seed-words.txt"
+    volumes:
+      - ${APP_DATA_DIR}/minotari-wallet:/tari-data

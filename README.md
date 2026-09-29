@@ -1,8 +1,17 @@
 # Silver's Crypto Store
 
-A catalog of self-hosted crypto/mining apps built by [SIlver765](https://github.com/SIlver765) — designed to run on umbrelOS, 5tratumOS, and similar home-server app stores.
+An umbrelOS / 5tratumOS **community app store** — add this repo's URL once and all of [SIlver765](https://github.com/SIlver765)'s apps show up in your App Store, ready to install.
 
-Each app lives in its own repository and is developed independently. This repo is just the index.
+## Install this store
+
+On umbrelOS or 5tratumOS:
+
+1. Open the **App Store**
+2. Go to **Settings -> Community App Stores -> Add a Store**
+3. Paste: `https://github.com/SIlver765/silvers-crypto-store`
+4. The apps below will appear under "Silver's Crypto Store"
+
+Each app is still developed in its own repository (linked below) — this repo just packages them into one installable store.
 
 ## Apps
 
@@ -10,13 +19,17 @@ Each app lives in its own repository and is developed independently. This repo i
 Self-hosted Monero full node + [P2Pool](https://github.com/SChernykh/p2pool) node, built from source, with optional Tari (XTM) merge-mining, Monero/Tari wallet management, Discord webhook alerts, and a web dashboard for status, pool stats, and blocks found. Payouts go straight to your own wallet — no third-party pool, no custody, 0% fee.
 **Status:** Alpha · **Stack:** JavaScript
 
-### [silvers-hw-monitor](https://github.com/SIlver765/silvers-hw-monitor)
+### [Silver's HW Monitor](https://github.com/SIlver765/silvers-hw-monitor)
 Hardware monitor (CPU/RAM/storage temperature + usage) and fan control dashboard for umbrelOS / 5tratumOS.
 **Stack:** JavaScript
 
-### [Hive-OS-PXE](https://github.com/SIlver765/Hive-OS-PXE)
+### [Hive OS PXE](https://github.com/SIlver765/Hive-OS-PXE)
 Network-install server for Hive OS mining rigs — proxy-DHCP + TFTP + web UI for PXE-booting rigs onto Hive OS.
 **Stack:** Python
+
+## Updating an app listing
+
+Each app's manifest lives in its own folder here (`silvers-crypto-store-<app>/umbrel-app.yml` + `docker-compose.yml` + `icon.svg`). When an app ships a new version, bump the `version`, `image` digest/tag, and `releaseNotes` in the matching folder here, then commit and push — umbrelOS/5tratumOS will pick up the update automatically.
 
 ## Contributing
 

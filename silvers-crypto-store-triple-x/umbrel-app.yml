@@ -1,0 +1,38 @@
+manifestVersion: 1
+# Must be "<store id from umbrel-app-store.yml>-triple-x" - this folder
+# name must match it exactly.
+id: silvers-crypto-store-triple-x
+category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
+name: Triple X by Silver
+icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
+version: "v1.0-Alpha6"
+tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
+description: >-
+  Runs a full Monero node (monerod) and a P2Pool node side by side, with a
+  web dashboard for status, pool stats, blocks found, and settings. Optionally
+  merge-mines Tari (XTM) at no extra hashrate cost via the bundled Minotari
+  node/wallet containers. Choose P2Pool Standard, Mini, or Nano from the
+  Settings tab, point any RandomX miner (e.g. XMRig) at the stratum port
+  shown on the Pool tab, and payouts go straight to your own wallet address -
+  no third-party pool, no custodian, 0% fee.
+
+
+  Source and full release notes: https://github.com/SIlver765/Triple-X
+developer: SIlver765
+website: https://github.com/SIlver765/Triple-X
+dependencies: []
+repo: https://github.com/SIlver765/Triple-X
+support: https://github.com/SIlver765/Triple-X/issues
+port: 3000
+gallery:
+  - 1.jpg
+  - 2.jpg
+  - 3.jpg
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+submitter: SIlver765
+submission: https://github.com/SIlver765/silvers-crypto-store
+releaseNotes: >-
+  v1.0-Alpha6: see https://github.com/SIlver765/Triple-X for full release
+  notes - this listing mirrors the app's latest published version.
