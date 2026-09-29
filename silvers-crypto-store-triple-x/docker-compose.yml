@@ -1,24 +1,19 @@
 version: "3.7"
 
-# This is the Umbrel/5tratumOS-flavored compose file - it follows the
-# platform's conventions (app_proxy, ${APP_DATA_DIR} bind mounts, prebuilt
-# images instead of `build:`) rather than the plain-Docker one at the repo
-# root. See ../README.md "Umbrel / 5tratumOS community app store install"
-# for the full picture, including how images get built and published.
+# This is the 5tratumOS-flavored compose file - it follows the platform's
+# conventions (${APP_DATA_DIR} bind mounts, prebuilt images instead of
+# `build:`) rather than the plain-Docker one at the repo root. See
+# ../README.md "5tratumOS app store install" for the full picture,
+# including how images get built and published.
+#
+# 5tratumOS runs no app_proxy, so `web` publishes its port directly instead
+# of routing through one.
 #
 # Every `image:` below should be pinned to a `@sha256:<digest>` once
-# published (see ../.github/workflows/publish-images.yml) - Umbrel's own
-# apps all do this so an update can't silently change what's running.
+# published (see ../.github/workflows/publish-images.yml) so an update
+# can't silently change what's running.
 
 services:
-  app_proxy:
-    environment:
-      # "<app-id>_<service-name>_1" - the trailing "_1" is required by
-      # Umbrel's proxy convention, even though this app only ever runs one
-      # replica of each service.
-      APP_HOST: silvers-crypto-store-triple-x_web_1
-      APP_PORT: 3000
-
   web:
     # Pinned to the v1.0-Alpha7 build's exact digest (not :latest) so the
     # platform is forced to pull this specific image instead of reusing
@@ -28,6 +23,10 @@ services:
     image: ghcr.io/silver765/triple-x-app@sha256:98810859bf2b70871362c635f99cadc623eaf5309e7ded81ef0ea3174562d3fc
     restart: on-failure
     stop_grace_period: 1m
+    # 5tratumOS runs no app_proxy - publish the manifest's `port:` (3000)
+    # directly on the host.
+    ports:
+      - "3000:3000"
     volumes:
       - ${APP_DATA_DIR}/config:/data/config
       - ${APP_DATA_DIR}/p2pool-api:/data/p2pool-api:ro
@@ -53,9 +52,7 @@ services:
       PORT: "3000"
       # Plain service name - Compose gives every service in this project a DNS
       # alias equal to its name on the project's own network, regardless of
-      # how the platform names/cases the project itself. Only app_proxy (a
-      # separate container on 5tratumOS's shared network, outside this
-      # project) needs the fully-qualified "<app-id>_<service>_1" form above.
+      # how the platform names/cases the project itself.
       MONEROD_HOST: monerod
       MONEROD_RPC_PORT: "18081"
       CONFIG_DIR: /data/config

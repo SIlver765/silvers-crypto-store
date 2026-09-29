@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha7"
+version: "v1.0-Alpha8"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,9 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha8: 5tratumOS runs no app_proxy, so the dashboard's port (3000)
+  is now published directly by the web service instead of relying on one -
+  compose-only fix, no image rebuild needed.
   v1.0-Alpha7: fixes Tari merge-mining's minotari-node container failing to
   stay running two different ways - a comma-parsing bug in its gRPC
   allow-methods list caused an instant crash loop, and (once that was fixed)
