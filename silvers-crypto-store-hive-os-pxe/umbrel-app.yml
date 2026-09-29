@@ -4,7 +4,7 @@ id: silvers-crypto-store-hive-os-pxe
 category: networking
 name: Hive OS PXE by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-hive-os-pxe/icon.svg
-version: "v1.0-Dev4"
+version: "v1.0-Dev6"
 tagline: Network-flash Hive OS onto mining rigs
 description: >-
   A lean PXE deploy server for Hive OS rigs. Runs dnsmasq in proxy-DHCP mode (your router stays the
@@ -32,6 +32,8 @@ torOnly: false
 submitter: Silver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Dev6: the Image tab can now download the latest Hive OS with one click, and has instructions for finding it yourself. Fixes downloads failing with HTTP 403.
+  v1.0-Dev5: packaging fix only. Same app as Dev4 (no login by default), now with the matching image.
   v1.0-Dev4: no login by default. A password is optional and set by the user in Settings.
   v1.0-Dev3: the admin UI now works inside the OS app window (relative links, works from any mount path).
   v1.0-Dev2: the admin UI now opens directly on port 8380 (no proxy needed).

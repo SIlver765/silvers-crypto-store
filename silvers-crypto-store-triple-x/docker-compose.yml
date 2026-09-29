@@ -1,33 +1,34 @@
 version: "3.7"
 
 # This is the Umbrel/5tratumOS-flavored compose file - it follows the
-# platform's conventions (app_proxy, ${APP_DATA_DIR} bind mounts, prebuilt
-# images instead of `build:`) rather than the plain-Docker one at the repo
-# root. See ../README.md "Umbrel / 5tratumOS community app store install"
-# for the full picture, including how images get built and published.
+# platform's conventions (${APP_DATA_DIR} bind mounts, prebuilt images
+# instead of `build:`) rather than the plain-Docker one at the repo root.
+# See ../README.md "Umbrel / 5tratumOS community app store install" for the
+# full picture, including how images get built and published.
+#
+# 5tratumOS runs no app_proxy container (unlike umbrelOS, which injects one
+# per app from just the environment stanza an app's compose file used to
+# declare here) - so `web` below publishes its port directly instead of
+# relying on one to route to it.
 #
 # Every `image:` below should be pinned to a `@sha256:<digest>` once
-# published (see ../.github/workflows/publish-images.yml) - Umbrel's own
-# apps all do this so an update can't silently change what's running.
+# published (see ../.github/workflows/publish-images.yml) so an update
+# can't silently change what's running.
 
 services:
-  app_proxy:
-    environment:
-      # "<app-id>_<service-name>_1" - the trailing "_1" is required by
-      # Umbrel's proxy convention, even though this app only ever runs one
-      # replica of each service.
-      APP_HOST: silvers-crypto-store-triple-x_web_1
-      APP_PORT: 3000
-
   web:
-    # Pinned to the v1.0-Alpha8 build's exact digest (not :latest) so the
+    # Pinned to the v1.0-Alpha9 build's exact digest (not :latest) so the
     # platform is forced to pull this specific image instead of reusing
     # whatever it already has cached under a floating tag. Update this
     # digest (see ../.github/workflows/publish-images.yml) every time a new
     # version is published.
-    image: ghcr.io/silver765/triple-x-app@sha256:8565831b49ebf678f7d086e95d7b3491167fffc6c2f74495480b7ff149aaa36d
+    image: ghcr.io/silver765/triple-x-app@sha256:021bf1aca19482b7c40b82793a803d2843c647327a49a0fcd80bf734eaa2d8ee
     restart: on-failure
     stop_grace_period: 1m
+    # 5tratumOS runs no app_proxy - publish the manifest's `port:` (3000)
+    # directly on the host so the dashboard is actually reachable.
+    ports:
+      - "3000:3000"
     volumes:
       - ${APP_DATA_DIR}/config:/data/config
       - ${APP_DATA_DIR}/p2pool-api:/data/p2pool-api:ro
@@ -53,9 +54,7 @@ services:
       PORT: "3000"
       # Plain service name - Compose gives every service in this project a DNS
       # alias equal to its name on the project's own network, regardless of
-      # how the platform names/cases the project itself. Only app_proxy (a
-      # separate container on 5tratumOS's shared network, outside this
-      # project) needs the fully-qualified "<app-id>_<service>_1" form above.
+      # how the platform names/cases the project itself.
       MONEROD_HOST: monerod
       MONEROD_RPC_PORT: "18081"
       CONFIG_DIR: /data/config
@@ -74,8 +73,8 @@ services:
       MONERO_WALLET_STATE_FILE: /data/state/monero-wallet.json
 
   monerod:
-    # Pinned to the v1.0-Alpha8 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-monerod@sha256:84b4e43ce27d92e1b838d38ad21e2fe4d2c4148922b9a847a603002a1844ceda
+    # Pinned to the v1.0-Alpha9 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-monerod@sha256:eeb92c05b8832a570b4c5118ff653b7b0b29fd01abcfe5d3d8f31b7db3413c24
     restart: on-failure
     stop_grace_period: 1m
     command:
@@ -105,10 +104,10 @@ services:
   # --disable-rpc-login - never published to the host (no `ports:` here),
   # same internal-network-only trust boundary monerod's own RPC relies on.
   monero-wallet-rpc:
-    # Pinned to the v1.0-Alpha8 build's exact digest - see note on web's
+    # Pinned to the v1.0-Alpha9 build's exact digest - see note on web's
     # image above. Shares docker/monerod/Dockerfile's builder stage with
     # monerod itself, just a different final target.
-    image: ghcr.io/silver765/triple-x-monero-wallet-rpc@sha256:5ae8a9c3cdecd8e2afc242cbc4735b19e00460bcab874c3b025dd8e9eb2949bd
+    image: ghcr.io/silver765/triple-x-monero-wallet-rpc@sha256:da03c48b065d7318d21514332d478e8acb84da1637171f10e224b319135c4a86
     restart: on-failure
     stop_grace_period: 1m
     depends_on:
@@ -126,8 +125,8 @@ services:
       - ${APP_DATA_DIR}/monero-wallet:/home/monero/wallet-data
 
   p2pool:
-    # Pinned to the v1.0-Alpha8 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-p2pool@sha256:619fbde7dd6ebfe6b32ba25d5d880d7500cfc90c4832019bbf184b42b5f81a2c
+    # Pinned to the v1.0-Alpha9 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-p2pool@sha256:5dae7bd049637503bfc3cef289e819878ab1012876cd32ec92a9cfe6ddfdd6c8
     restart: on-failure
     stop_grace_period: 1m
     environment:
@@ -221,8 +220,8 @@ services:
       - ${APP_DATA_DIR}/minotari-logs:/var/tari/node/mainnet/log
 
   minotari-wallet:
-    # Pinned to the v1.0-Alpha8 build's exact digest - see note on web's image above.
-    image: ghcr.io/silver765/triple-x-minotari-wallet@sha256:a2f3d59510f0ec7fd78a7dd1061223ddee28c18c8ad8fa5d800741deb64da425
+    # Pinned to the v1.0-Alpha9 build's exact digest - see note on web's image above.
+    image: ghcr.io/silver765/triple-x-minotari-wallet@sha256:8a46992c61266b4b7670da35a8e358caea47a22758f5f27f8b89dbf39ebbfa80
     restart: on-failure
     stop_grace_period: 1m
     command:
