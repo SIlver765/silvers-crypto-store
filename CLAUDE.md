@@ -1,8 +1,11 @@
 # Project rules: Silver's apps on 5tratumOS (store: Silver765/silvers-crypto-store)
 
 ## Platform facts (observed on the real machine, 192.168.0.240, host "5tratumos", user "forge")
-- 5tratumOS runs NO app proxy. No app_proxy container exists for any app. Apps publish their ports
-  directly (e.g. 0.0.0.0:21212->3000). Do not use an app_proxy service and do not assume one exists.
+- Evidence so far: an `app_proxy` service declared in Hive OS PXE's compose never started (no app_proxy
+  container appeared), and the other apps on the machine publish their ports directly (e.g.
+  0.0.0.0:21212->3000). Treat "no app proxy" as the working assumption, NOT a proven rule. Before
+  rewriting any app's compose, install it and load its manifest port from another machine on the LAN.
+  Only change apps that are actually broken.
 - The manifest `port:` is where the Open button goes. The app itself MUST be listening on exactly that
   port on the host. Bridge apps: publish it in `ports:`. Host-network apps (network_mode: host): bind
   that port in the app.
