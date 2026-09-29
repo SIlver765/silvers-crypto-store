@@ -1,6 +1,6 @@
 manifestVersion: 1
-# Must be "<store id from umbrel-app-store.yml>-triple-x" - this folder
-# name must match it exactly.
+# Must be "<your store id from umbrel-app-store.yml>-triple-x" - this
+# folder name must match it exactly.
 id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
@@ -15,15 +15,13 @@ description: >-
   Settings tab, point any RandomX miner (e.g. XMRig) at the stratum port
   shown on the Pool tab, and payouts go straight to your own wallet address -
   no third-party pool, no custodian, 0% fee.
-
-
-  Source and full release notes: https://github.com/SIlver765/Triple-X
 developer: SIlver765
 website: https://github.com/SIlver765/Triple-X
 dependencies: []
 repo: https://github.com/SIlver765/Triple-X
 support: https://github.com/SIlver765/Triple-X/issues
 port: 3000
+# Add real screenshots here before publishing - these are placeholders.
 gallery:
   - 1.jpg
   - 2.jpg
@@ -34,5 +32,113 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
-  v1.0-Alpha6: see https://github.com/SIlver765/Triple-X for full release
-  notes - this listing mirrors the app's latest published version.
+  v1.0-Alpha6: fixes Import Blockchain failing (rsync exit 12/23) when the
+  remote path is a Windows drive letter (e.g. F:\folder\subfolder) - it's
+  now auto-converted to the Cygwin form a Windows rsync install actually
+  understands. The Import Blockchain progress bar also now shows the
+  transfer percentage as text underneath it.
+  v1.0-Alpha5: the Pool tab's Worker Details cards now show each online
+  worker's current mining difficulty - the difficulty their most recent
+  share was submitted at, which reflects P2Pool's vardiff auto-adjustment
+  in real time, unlike the existing best-share stat (their all-time
+  record, which only trends upward).
+  v1.0-Alpha4: adds an app icon (combining Monero's ghost symbol with
+  Tari's logo as a merge-mining badge) - both the web dashboard's
+  browser-tab favicon and the App Store listing icon were missing one
+  until now.
+  v1.0-Alpha3: the Wallet tab now recognizes an externally-managed wallet
+  address. If a payout/merge-mining address is saved in Settings without
+  ever clicking Create Wallet here, that address belongs to a wallet this
+  dashboard has no keys for (a hardware wallet, mobile wallet, exchange,
+  another Tari client, etc.) - the Wallet tab now shows a dedicated card
+  for it (address only) instead of offering to create an unrelated
+  wallet with no connection to the address actually receiving payouts.
+  v1.0-Alpha2: fixes Import Blockchain failing with password
+  authentication ("rsync exited with code 255 - Connection reset by
+  <host> port 22" right after host-key verification). BatchMode=yes was
+  disabling ssh's password prompt entirely, so the password auth path
+  never actually got a chance to send the password. Only applied on the
+  key-based auth path now.
+  v1.0-Alpha1: entering Alpha - the Dev1-Dev11 numbered builds are done,
+  versioning moves to v1.0-AlphaN going forward. No functional changes
+  from Dev11; this is a naming/versioning milestone marking the app as
+  feature-complete enough for wider testing.
+  v0.0.1-Dev11: no functional changes - rebuilt from the same source as
+  Dev10 to test whether 5tratumOS's app-store update detection was stuck
+  comparing version strings incorrectly (e.g. treating "Dev10" as older
+  than "Dev9" in a plain lexicographic comparison, since "1" < "9").
+  v0.0.1-Dev10: fixes the Import Blockchain feature's rsync transfer
+  failing against Windows' bundled OpenSSH Server ("rsync exited with code
+  255" / "Connection reset by <host> port 22"). This container's ssh
+  client tries a post-quantum hybrid key exchange first; Windows' older
+  bundled OpenSSH Server doesn't support it and resets the connection
+  instead of falling back cleanly. Now forces classical-only key exchange
+  for this transfer, which every OpenSSH version in practical use
+  supports.
+  v0.0.1-Dev9: Discord webhook notifications (Settings tab) - get pinged
+  when a Monero block, a Tari block, or (off by default) a P2Pool share is
+  found, with a "Send Test Notification" button to confirm it's wired up.
+  The Overview readiness checklist's Blockchain Sync check now shows three
+  states instead of two - red "Not Running" when the node isn't reachable,
+  orange "Syncing" while it's catching up, green "Synced" once caught up -
+  instead of treating "offline" and "still syncing" as the same red state.
+  The Miner Configuration panel now notes that P2Pool's stratum server
+  never actually checks the password field (confirmed from P2Pool's own
+  source), and Settings gained a "Which Pool Type Should I Use?" advisor
+  panel. Settings is also reorganized: Discord Notifications, the pool-type
+  advisor, and the P2Pool memory-usage flags collapse by default so the tab
+  takes up less screen space, with Save Settings moved to its own
+  always-visible row so it's never hidden. Also fixes the on-screen version
+  badge, which had been stuck reading "Dev1" since that build regardless of
+  which Dev version was actually running.
+  v0.0.1-Dev8: new hidden, opt-in "Import Blockchain" feature in Settings -
+  pulls a pre-synced monerod data directory from another machine over
+  SSH/rsync, so a new install doesn't have to sync from the network from
+  scratch. Off by default (toggle in Settings) since it requires mounting
+  the Docker socket into the app container to safely stop/start monerod
+  around the copy - full instructions are shown in the app, including how
+  to enable an SSH server on the source machine (Windows/Linux/macOS). Adds
+  a "Browse..." button next to the Remote Path field that pops up a real
+  folder browser (via SFTP) for the other machine, instead of typing a
+  path blind. Also fixes the password/textarea fields in Settings
+  rendering with a pure-white background instead of matching the app's
+  theme.
+  v0.0.1-Dev7: per-flag P2Pool memory-usage toggles in Settings
+  (--light-mode, --no-randomx, --no-cache, each independently switchable
+  with an explanation). Wallet tab now shows real balances and can send
+  XMR and XTM (reversing the prior read-only design), with both wallets
+  redesigned as real card-shaped widgets (official Monero GUI art / your
+  own Tari brand art) with a masked address and a show/hide toggle. The
+  Startup Checklist's P2P port check is now three separate checks -
+  Monero, P2Pool, and Tari - instead of just Monero, each turning green
+  once that service is actually receiving inbound connections.
+  v0.0.1-Dev5: fixes the Minotari (Tari base node) container crash-looping
+  instantly on every start with "the argument '--base-path <BASE_PATH>'
+  cannot be used multiple times". The official image's own startup wrapper
+  already hardcodes --base-path /var/tari/node before our own arguments are
+  appended, so our extra --base-path=/tari-data was rejected outright. Now
+  we don't pass --base-path at all, and our volumes target /var/tari/node
+  instead (compose-only fix, no image rebuild needed).
+  v0.0.1-Dev4: fixes the Minotari (Tari base node) container never writing
+  base_node.log ("Log file not created yet" forever on the Logs tab). The
+  official minotari_node image defaults to a non-root "tari" user, but a
+  freshly created ${APP_DATA_DIR}/minotari-node volume is owned by root, so
+  it couldn't write to its own data/log directories. Now runs as root
+  (compose-only fix, no image rebuild needed).
+  v0.0.1-Dev3: fixes monerod crashing with "Permission denied:
+  /root/.bitmonero" (and the resulting P2Pool crash-loop) - Dev1/Dev2's
+  images were published before a HOME/setpriv fix landed on this branch;
+  Dev3 rebuilds all 5 images from the fixed source. No functional changes
+  from Dev1 otherwise: brand-new "Command Center" dashboard UI - tabs for
+  Overview, Pool, Blocks, Wallet, Logs, and Settings, replacing the previous
+  single-page layout. Adds a Wallet tab with one-time "generate, show once"
+  seed-phrase backup for both the Monero and Tari wallets, an optional
+  P2Pool Observer integration for network-wide stats, a live-updating
+  mining animation, and real per-worker share/difficulty tracking. Backend
+  additions: a new monero-wallet-rpc container (bundled Monero wallet, only
+  ever queried for address/seed, never balance or transfers) and real gRPC
+  sync-progress reporting for the Minotari node and wallet. Everything
+  Tari-related remains experimental/optional - the app works exactly as
+  before if you never set a Tari address. Builds on the earlier Dev1-Dev7
+  fixes (see git history): monerod's SIGILL crash fix, P2Pool's
+  shared-library fix, live sidebar sync status, and the live-tail Logs tab.

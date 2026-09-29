@@ -19,21 +19,18 @@ description: >-
 
   Uses host networking and UDP ports 67, 69 and 4011. Port 80 is not used. Rig files are served
   unauthenticated on TCP 8382 (LAN only, do not expose to the internet).
-
-
-  Source: https://github.com/SIlver765/Hive-OS-PXE
-developer: SIlver765
-website: https://github.com/SIlver765/Hive-OS-PXE
+developer: Silver765
+website: https://github.com/Silver765/Hive-OS-PXE
 dependencies: []
-repo: https://github.com/SIlver765/Hive-OS-PXE
-support: https://github.com/SIlver765/Hive-OS-PXE/issues
+repo: https://github.com/Silver765/Hive-OS-PXE
+support: https://github.com/Silver765/Hive-OS-PXE/issues
 port: 8380
 gallery: []
 path: ""
 defaultUsername: ""
 deterministicPassword: true
 torOnly: false
-submitter: SIlver765
+submitter: Silver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
-  v1.0-Dev: see https://github.com/SIlver765/Hive-OS-PXE for full release notes.
+  v1.0-Dev: initial release.

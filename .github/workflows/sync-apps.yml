@@ -1,0 +1,32 @@
+name: Sync app listings
+
+on:
+  schedule:
+    # Every hour, on the hour.
+    - cron: "0 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout silvers-crypto-store
+        uses: actions/checkout@v4
+
+      - name: Pull latest app manifests from each app's repo
+        run: bash scripts/sync-apps.sh
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No changes - store already up to date."
+            exit 0
+          fi
+          git add -A
+          git commit -m "Sync app listings from source repos [automated]"
+          git push
