@@ -32,9 +32,15 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
-  v1.0-Alpha8: 5tratumOS runs no app_proxy, so the dashboard's port (3000)
-  is now published directly by the web service instead of relying on one -
-  compose-only fix, no image rebuild needed.
+  v1.0-Alpha8: efficiency pass - the settings/wallet-state files were being
+  re-read and re-parsed from disk several times per poll tick, the Tari
+  blocks table was fetched as an extra sequential round-trip instead of in
+  parallel with everything else, the Startup Checklist/Network Ports cards
+  were torn down and rebuilt every 10s tick even when unchanged, and the
+  blocks/workers state file was rewritten to disk on nearly every poll
+  during active mining instead of being batched. Also prunes workers not
+  seen in 90+ days so that file doesn't grow unbounded on a long-running
+  install.
   v1.0-Alpha7: fixes Tari merge-mining's minotari-node container failing to
   stay running two different ways - a comma-parsing bug in its gRPC
   allow-methods list caused an instant crash loop, and (once that was fixed)
