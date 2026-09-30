@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha10"
+version: "v1.0-Alpha11"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,26 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha11: fixes three bugs found right after Alpha10 shipped. The
+  Miner Configuration LAN Pool URL was reading the app container's own
+  network interfaces, which on 5tratumOS's bridge networking returns
+  Docker's internal bridge IP (e.g. 172.18.0.5) instead of the box's real
+  LAN address - now uses the incoming request's own Host header instead,
+  since the browser loading the page is necessarily already on the LAN.
+  The on-screen version badge was a hardcoded string in index.html that
+  nothing pointed back at as a step to update, so it silently stayed on
+  "Alpha-9" through all of Alpha10 - now driven from one server-side
+  constant. XTM Blocks Found could show fabricated blocks on installs
+  where minotari-node is merely running, even with Tari merge-mining not
+  configured - the log-line detector's substring check for "mined" had no
+  word boundary, so it also matched unrelated log lines containing words
+  like "deterMINED" or "exaMINED", and recorded a "block found" even when
+  the actual height-matching pattern failed to match anything. Now only
+  records a block when the specific mined/found/submitted + block + height
+  pattern actually matches. IMPORTANT: this only stops new false
+  positives - an install already showing an inflated XTM Blocks Found count
+  needs its tari-blocks-state.json deleted from the state volume once after
+  updating.
   v1.0-Alpha10: real-time worker detection now reads P2Pool's own local
   stratum API instead of parsing logs, so the Pool/Blocks tabs' Miners and
   Blocks Found stats reflect this node's own miners and only blocks this
