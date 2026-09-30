@@ -27,10 +27,6 @@ Hardware monitor (CPU/RAM/storage temperature + usage) and fan control dashboard
 Network-install server for Hive OS mining rigs — proxy-DHCP + TFTP + web UI for PXE-booting rigs onto Hive OS.
 **Stack:** Python
 
-## Updating an app listing
-
-Each app's manifest lives in its own folder here (`silvers-crypto-store-<app>/umbrel-app.yml` + `docker-compose.yml` + `icon.svg`). When an app ships a new version, bump the `version`, `image` digest/tag, and `releaseNotes` in the matching folder here, then commit and push — umbrelOS/5tratumOS will pick up the update automatically.
-
 ## Contributing
 
 Found a bug or want to suggest an app? Open an issue or PR on the relevant app's own repository.
