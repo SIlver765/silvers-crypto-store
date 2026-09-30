@@ -1,10 +1,10 @@
 # Silver's Crypto Store
 
-An umbrelOS / 5tratumOS **community app store** — add this repo's URL once and all of [SIlver765](https://github.com/SIlver765)'s apps show up in your App Store, ready to install.
+A 5tratumOS **community app store** — add this repo's URL once and all of [SIlver765](https://github.com/SIlver765)'s apps show up in your App Store, ready to install.
 
 ## Install this store
 
-On umbrelOS or 5tratumOS:
+On 5tratumOS:
 
 1. Open the **App Store**
 2. Go to **Settings -> Community App Stores -> Add a Store**
@@ -15,17 +15,19 @@ Each app is still developed in its own repository (linked below) — this repo j
 
 ## Apps
 
-### [Triple X]
+### [Triple X](https://github.com/SIlver765/Triple-X) — v1.0-Alpha11
 Self-hosted Monero full node + [P2Pool](https://github.com/SChernykh/p2pool) node, built from source, with optional Tari (XTM) merge-mining, Monero/Tari wallet management, Discord webhook alerts, and a web dashboard for status, pool stats, and blocks found. Payouts go straight to your own wallet — no third-party pool, no custody, 0% fee.
 **Status:** Alpha · **Stack:** JavaScript
 
-### [Silver's HW Monitor]
-Hardware monitor (CPU/RAM/storage temperature + usage) and fan control dashboard for umbrelOS / 5tratumOS.
+### [Silver's HW Monitor](https://github.com/SIlver765/silvers-hw-monitor) — v1.4.1
+Hardware monitor (CPU/RAM/storage temperature + usage) and fan control dashboard for 5tratumOS.
 **Stack:** JavaScript
 
-### [Hive OS PXE]
+### [Hive OS PXE](https://github.com/SIlver765/Hive-OS-PXE) — v1.0-Dev6
 Network-install server for Hive OS mining rigs — proxy-DHCP + TFTP + web UI for PXE-booting rigs onto Hive OS.
 **Stack:** Python
+
+Versions above reflect the last successful sync; check each app's own repo for its full changelog.
 
 ## Contributing
 
