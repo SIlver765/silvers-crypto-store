@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha9"
+version: "v1.0-Alpha10"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,31 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha10: real-time worker detection now reads P2Pool's own local
+  stratum API instead of parsing logs, so the Pool/Blocks tabs' Miners and
+  Blocks Found stats reflect this node's own miners and only blocks this
+  node's configured address actually found (verified against the real
+  wallet-address match P2Pool's own source performs), not sidechain-wide
+  totals from every miner on the pool. The Pool tab's ETA to Find P2Pool
+  Share and ETA to Find Block are now combined into one box (using your own
+  hashrate for the share ETA, not the pool's, matching p2pool.observer's own
+  calculator), and the Hash Rate History / Network Difficulty History
+  graphs are redesigned with real 24h server-persisted history, gridlines,
+  axis labels, and a legend instead of a 10-minute client-only buffer that
+  reset on every reload (also fixes Network Difficulty History actually
+  showing Monero mainchain difficulty instead of the sidechain difficulty
+  its label claimed). Adds a Miner Configuration LAN/WAN pool URL split, a
+  "Send status command" button on the Logs tab (P2Pool's stdin console over
+  a named pipe), Discord notifications for workers connecting/disconnecting,
+  a clipboard-copy fallback for plain-HTTP/LAN access where the browser
+  disables the Clipboard API, and a new opt-in "Automatically stop Minotari
+  (XTM) when unused" Settings toggle that stops the Tari node/wallet
+  entirely when no Tari address is configured, since Minotari has no
+  pruning option upstream and otherwise runs a full always-growing chain
+  for a feature many installs never use. Also fixes the Mining Status
+  bubble never turning green (stale CSS selector) and Miner Configuration's
+  input fields rendering blank (text was being set as textContent instead
+  of an input's value).
   v1.0-Alpha9: 5tratumOS runs no app_proxy container, so the dashboard's
   port (3000) is now published directly by the web service instead of
   relying on one to route to it - compose-only fix, no image rebuild
