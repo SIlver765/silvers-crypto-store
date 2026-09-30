@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha11"
+version: "v1.0-Alpha12"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,20 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha12: Overview tab's two blockchain cards (Monero and Minotari,
+  still shown side by side) redesigned with more at-a-glance detail - an
+  IBD tag while syncing, a Pruned tag for Monero (this stack always runs
+  monerod with --prune-blockchain), a Sync ETA estimated from recent
+  block-height speed, a "Last block X ago" line for Monero, a new Disk
+  tile (blockchain size on disk), and a Peers tile for Minotari. The sync
+  progress ring on both cards is also noticeably bigger. Also removes the
+  Import Blockchain "Browse..." button entirely - it depended on the
+  ssh2 npm package, which turned out to not even be declared as a
+  dependency, so it likely errored rather than working; Remote Path is
+  now a plain text field, same as Host/Port/Username already were. Also
+  fixes a miss from Alpha11: the version badge's APP_VERSION constant had
+  been left at "v1.0-Alpha10" in the code that actually shipped as
+  Alpha11.
   v1.0-Alpha11: fixes three bugs found right after Alpha10 shipped. The
   Miner Configuration LAN Pool URL was reading the app container's own
   network interfaces, which on 5tratumOS's bridge networking returns
