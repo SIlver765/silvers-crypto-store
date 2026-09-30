@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha12"
+version: "v1.0-Alpha13"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,22 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha13: rebuilds the XTM Blocks Found detector (lib/tariBlocks.js)
+  on confirmed real log wording instead of guessed regexes - two prior
+  attempts each produced real false positives from actual node logs (one
+  matching "deterMINED" with no word boundary, the other matching an
+  unrelated "Header not found for block height N" checkpoint warning).
+  Checked tari-project/tari's own source: p2pool's merge-mining SubmitBlock
+  gRPC call routes through the exact same handler every P2P-received block
+  goes through, which logs "Block #{height} ({hash}) received from
+  {source}" - {source} is "remote peer: <id>" for every block synced from
+  the network (not a find) or the literal "local services" only when it
+  came from this node's own submission. The detector now matches
+  specifically on "received from local services", eliminating this whole
+  class of false positive at the root rather than patching around new
+  patterns as they're found. IMPORTANT: this doesn't retroactively fix a
+  state file that already has false entries from an earlier version - see
+  README for the tari-blocks-state.json cleanup step.
   v1.0-Alpha12: Overview tab's two blockchain cards (Monero and Minotari,
   still shown side by side) redesigned with more at-a-glance detail - an
   IBD tag while syncing, a Pruned tag for Monero (this stack always runs
