@@ -17,9 +17,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull latest app manifests from each app's repo
+        id: sync
+        continue-on-error: true
         run: bash scripts/sync-apps.sh
 
-      - name: Commit and push if anything changed
+      - name: Commit and push whatever synced successfully
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -30,3 +32,9 @@ jobs:
           git add -A
           git commit -m "Sync app listings from source repos [automated]"
           git push
+
+      - name: Fail the job if any app didn't sync
+        if: steps.sync.outcome == 'failure'
+        run: |
+          echo "One or more apps failed to sync - see the 'Pull latest app manifests' step above for which one and why." >&2
+          exit 1

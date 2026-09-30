@@ -4,7 +4,13 @@
 # app_proxy APP_HOST) - the same edits that were done by hand when this
 # store was first put together. Run by .github/workflows/sync-apps.yml
 # every hour, or manually: ./scripts/sync-apps.sh
-set -euo pipefail
+#
+# One app's failure (private repo, network blip, missing file, etc.) does
+# NOT abort the others - each app is synced independently, real errors are
+# printed (not swallowed), and the script exits non-zero at the end if any
+# app failed, so the workflow still notices even though the apps that did
+# succeed get committed.
+set -uo pipefail
 
 STORE_ID="silvers-crypto-store"
 STORE_REPO="SIlver765/silvers-crypto-store"
@@ -18,12 +24,12 @@ APPS=(
   "SIlver765/Hive-OS-PXE|HiveOSPXE-hive-os-pxe|${STORE_ID}-hive-os-pxe|HiveOSPXE-hive-os-pxe"
 )
 
-for entry in "${APPS[@]}"; do
-  IFS='|' read -r src_repo src_path dest_dir old_prefix <<< "$entry"
-  echo "== Syncing $src_repo ($src_path) -> $dest_dir =="
+sync_one() (
+  set -euo pipefail
+  src_repo="$1" src_path="$2" dest_dir="$3" old_prefix="$4"
 
   clone_dir="$WORKDIR/$(basename "$src_repo")"
-  git clone --depth 1 "https://github.com/${src_repo}.git" "$clone_dir" >/dev/null 2>&1
+  git clone --depth 1 "https://github.com/${src_repo}.git" "$clone_dir"
 
   mkdir -p "$dest_dir"
   cp "$clone_dir/$src_path/umbrel-app.yml" "$dest_dir/umbrel-app.yml"
@@ -45,6 +51,26 @@ for entry in "${APPS[@]}"; do
   # use the default bridge networking set this - Hive OS PXE uses host
   # networking and won't match, which is fine).
   sed -i "s|APP_HOST: ${old_prefix}_web_1|APP_HOST: ${dest_dir}_web_1|" "$dest_dir/docker-compose.yml"
+)
+
+failed=()
+for entry in "${APPS[@]}"; do
+  IFS='|' read -r src_repo src_path dest_dir old_prefix <<< "$entry"
+  echo "== Syncing $src_repo ($src_path) -> $dest_dir =="
+  # Plain statement, not `if sync_one ...` directly - bash only honors the
+  # subshell's own `set -e` (stopping at the first failing command inside
+  # it) when it isn't itself the thing being tested by if/&&/||.
+  sync_one "$src_repo" "$src_path" "$dest_dir" "$old_prefix"
+  rc=$?
+  if [ "$rc" -ne 0 ]; then
+    echo "!! FAILED syncing $src_repo - see error above. Leaving its existing store copy untouched." >&2
+    failed+=("$src_repo")
+  fi
 done
+
+if [ "${#failed[@]}" -gt 0 ]; then
+  echo "Sync finished with failures: ${failed[*]}" >&2
+  exit 1
+fi
 
 echo "Sync complete."
