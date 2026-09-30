@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha13"
+version: "v1.0-Alpha14"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,20 @@ defaultPassword: ""
 submitter: SIlver765
 submission: https://github.com/SIlver765/silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha14: fixes minotari-node/minotari-wallet endlessly crash-looping
+  and leaving the app stuck in a "degraded" state - this store manifest had
+  every service's restart policy set to `on-failure`, which Docker
+  restarts whenever a container exits non-zero, regardless of whether that
+  exit was a genuine crash or an intentional stop. The opt-in "Automatically
+  stop Minotari when unused" setting (added in Alpha10) calls a real Docker
+  stop on minotari-node/minotari-wallet every 60s when no Tari address is
+  configured, and minotari_node doesn't appear to exit cleanly on SIGTERM -
+  so it got auto-restarted by Docker right after, only to be stopped again
+  on the next poll, forever. Changed the restart policy to `unless-stopped`
+  (already used in the plain-Docker compose file at the repo root, which
+  never had this bug) - Docker still auto-recovers from a genuine crash,
+  but correctly leaves a container alone after an intentional stop.
+  Compose-only fix, no image rebuild needed.
   v1.0-Alpha13: rebuilds the XTM Blocks Found detector (lib/tariBlocks.js)
   on confirmed real log wording instead of guessed regexes - two prior
   attempts each produced real false positives from actual node logs (one
