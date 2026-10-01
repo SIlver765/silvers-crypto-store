@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha15"
+version: "v1.0-Alpha16"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,23 @@ defaultPassword: ""
 submitter: Silver765
 submission: https://github.com/Silver765/Silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha16: removes the "Automatically stop Minotari (XTM) when unused"
+  Settings toggle entirely (lib/minotariLifecycle.js deleted) - this was the
+  real cause of minotari-node/minotari-wallet repeatedly showing as degraded
+  on 5tratumOS: with the toggle on and no Tari address configured, it ran a
+  real `docker stop` on both containers every 60s, and minotari_node doesn't
+  exit cleanly on SIGTERM, so Docker force-kills it (exit 137) every single
+  time. Confirmed directly from a user's live logs/`docker inspect` (OOMKilled:
+  false, no memory limit - ruling out an actual resource issue) that this was
+  an intentional stop-and-get-SIGKILLed cycle, not a crash. Anyone who wants
+  Tari merge-mining should simply set a Tari address in Settings; anyone who
+  doesn't can just leave the containers running (their normal
+  `restart: unless-stopped` policy already handles real crashes fine) instead
+  of cycling them every minute. Also adds a decorative animated background to
+  the dashboard - a Monero coin (using the real app-icon artwork) with a Tari
+  coin orbiting it along a glowing ring path, the whole thing slowly drifting
+  around the page. Purely cosmetic, pointer-events disabled, respects
+  prefers-reduced-motion.
   v1.0-Alpha15: fixes monerod/monero-wallet-rpc intermittently crash-looping
   with "Failed to open lmdb environment: Permission denied" after a restart
   (confirmed from a user's live logs: ~26 minutes of restart attempts before
