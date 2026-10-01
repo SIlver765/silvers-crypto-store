@@ -16,7 +16,7 @@ dependencies: []
 repo: https://github.com/Silver765/silvers-hw-monitor
 support: https://github.com/Silver765/silvers-hw-monitor/issues
 port: 3300
-icon: https://raw.githubusercontent.com/Silver765/silvers-crypto-store/main/silvers-crypto-store-hw-monitor/icon.svg
+icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-hw-monitor/icon.svg
 path: ""
 defaultUsername: ""
 defaultPassword: ""
