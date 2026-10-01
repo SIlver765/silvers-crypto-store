@@ -4,7 +4,7 @@ manifestVersion: 1
 id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
-icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
+icon: https://raw.githubusercontent.com/Silver765/silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
 version: "v1.0-Alpha14"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
@@ -15,11 +15,11 @@ description: >-
   Settings tab, point any RandomX miner (e.g. XMRig) at the stratum port
   shown on the Pool tab, and payouts go straight to your own wallet address -
   no third-party pool, no custodian, 0% fee.
-developer: SIlver765
-website: https://github.com/SIlver765/Triple-X
+developer: Silver765
+website: https://github.com/Silver765/Triple-X
 dependencies: []
-repo: https://github.com/SIlver765/Triple-X
-support: https://github.com/SIlver765/Triple-X/issues
+repo: https://github.com/Silver765/Triple-X
+support: https://github.com/Silver765/Triple-X/issues
 port: 3000
 # Add real screenshots here before publishing - these are placeholders.
 gallery:
@@ -29,8 +29,8 @@ gallery:
 path: ""
 defaultUsername: ""
 defaultPassword: ""
-submitter: SIlver765
-submission: https://github.com/SIlver765/silvers-crypto-store
+submitter: Silver765
+submission: https://github.com/Silver765/silvers-crypto-store
 releaseNotes: >-
   v1.0-Alpha14: fixes minotari-node/minotari-wallet endlessly crash-looping
   and leaving the app stuck in a "degraded" state - this store manifest had

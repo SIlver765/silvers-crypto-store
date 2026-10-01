@@ -13,15 +13,15 @@
 set -uo pipefail
 
 STORE_ID="silvers-crypto-store"
-STORE_REPO="SIlver765/silvers-crypto-store"
+STORE_REPO="Silver765/silvers-crypto-store"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
 # source_repo | path in source repo | dest folder in this repo | old id/app-host prefix | README heading text
 APPS=(
-  "SIlver765/Triple-X|TripleX-triple-x|${STORE_ID}-triple-x|TripleX-triple-x|Triple X"
-  "SIlver765/silvers-hw-monitor|silvers-hw-monitor|${STORE_ID}-hw-monitor|silvers-hw-monitor|Silver's HW Monitor"
-  "SIlver765/Hive-OS-PXE|HiveOSPXE-hive-os-pxe|${STORE_ID}-hive-os-pxe|HiveOSPXE-hive-os-pxe|Hive OS PXE"
+  "Silver765/Triple-X|TripleX-triple-x|${STORE_ID}-triple-x|TripleX-triple-x|Triple X"
+  "Silver765/silvers-hw-monitor|silvers-hw-monitor|${STORE_ID}-hw-monitor|silvers-hw-monitor|Silver's HW Monitor"
+  "Silver765/Hive-OS-PXE|HiveOSPXE-hive-os-pxe|${STORE_ID}-hive-os-pxe|HiveOSPXE-hive-os-pxe|Hive OS PXE"
 )
 
 sync_one() (

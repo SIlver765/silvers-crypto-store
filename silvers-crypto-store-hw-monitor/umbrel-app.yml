@@ -10,14 +10,14 @@ description: >-
   It also lets you control PWM fan speed directly (silent/balanced/performance presets,
   or a manual percentage) on motherboards whose sensor chip is supported by the host's
   hwmon/lm-sensors kernel drivers.
-developer: SIlver765
-website: https://github.com/SIlver765/silvers-hw-monitor
+developer: Silver765
+website: https://github.com/Silver765/silvers-hw-monitor
 dependencies: []
-repo: https://github.com/SIlver765/silvers-hw-monitor
-support: https://github.com/SIlver765/silvers-hw-monitor/issues
+repo: https://github.com/Silver765/silvers-hw-monitor
+support: https://github.com/Silver765/silvers-hw-monitor/issues
 port: 3300
-icon: https://raw.githubusercontent.com/SIlver765/silvers-crypto-store/main/silvers-crypto-store-hw-monitor/icon.svg
+icon: https://raw.githubusercontent.com/Silver765/silvers-crypto-store/main/silvers-crypto-store-hw-monitor/icon.svg
 path: ""
 defaultUsername: ""
 defaultPassword: ""
-submitter: SIlver765
+submitter: Silver765
