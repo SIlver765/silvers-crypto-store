@@ -6,4 +6,8 @@
 #   Settings -> App Store -> Community App Stores -> Add store
 #   https://github.com/Silver765/Silvers-crypto-store
 id: silvers-crypto-store
-name: Silver's Crypto Store
+# No apostrophe here - 5tratumOS slugifies this into an update "channel" id
+# (e.g. "custom-<slug>"), and "Silver's" turns the apostrophe into its own
+# hyphen ("silver-s-..."), which 5tratumOS's updater then rejects as an
+# invalid channel. Keep this apostrophe-free.
+name: Silvers Crypto Store
