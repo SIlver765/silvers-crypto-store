@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha14"
+version: "v1.0-Alpha15"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,29 @@ defaultPassword: ""
 submitter: Silver765
 submission: https://github.com/Silver765/Silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha15: fixes monerod/monero-wallet-rpc intermittently crash-looping
+  with "Failed to open lmdb environment: Permission denied" after a restart
+  (confirmed from a user's live logs: ~26 minutes of restart attempts before
+  it self-resolved). docker/monerod/entrypoint.sh was chowning
+  /home/monero/.bitmonero non-recursively, so it only ever fixed the
+  top-level directory's ownership, never the lmdb/ subfolder (data.mdb/
+  lock.mdb) inside it - if the bind-mounted volume's ownership gets reset
+  (e.g. during an app update/restart on the host), monerod comes back up
+  unable to open its own database and gets stuck in Docker's restart loop
+  until something else happens to fix it. Now recursive - LMDB's own
+  on-disk format is only 1-2 files, so this costs nothing. Also fixes the
+  same root cause in docker/monerod/entrypoint-wallet-rpc.sh for monero
+  wallet-rpc's "Failed to initialize ringdb: ... Permission denied:
+  /root/.shared-ringdb" error (previously flagged as a harmless quirk) -
+  that script never set HOME before dropping to the unprivileged monero
+  user via setpriv, so it inherited HOME=/root and tried writing its ring
+  signature cache somewhere the monero user can't access; now sets
+  HOME=/home/monero, same fix already applied in entrypoint.sh. Also adds a
+  15-second heartbeat to the Logs tab's live-tail stream
+  (lib/logs.js) - confirmed some installs reach this app through a
+  5tratumOS reverse-proxy path (/apps/<id>/, not a direct port), which was
+  killing the stream as net::ERR_INCOMPLETE_CHUNKED_ENCODING whenever no
+  new log line appeared for a while (easily minutes on an idle node).
   v1.0-Alpha14: fixes minotari-node/minotari-wallet endlessly crash-looping
   and leaving the app stuck in a "degraded" state - this store manifest had
   every service's restart policy set to `on-failure`, which Docker
