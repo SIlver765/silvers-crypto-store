@@ -17,11 +17,11 @@ STORE_REPO="SIlver765/silvers-crypto-store"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
-# source_repo | path in source repo | dest folder in this repo | old id/app-host prefix
+# source_repo | path in source repo | dest folder in this repo | old id/app-host prefix | README heading text
 APPS=(
-  "SIlver765/Triple-X|TripleX-triple-x|${STORE_ID}-triple-x|TripleX-triple-x"
-  "SIlver765/silvers-hw-monitor|silvers-hw-monitor|${STORE_ID}-hw-monitor|silvers-hw-monitor"
-  "SIlver765/Hive-OS-PXE|HiveOSPXE-hive-os-pxe|${STORE_ID}-hive-os-pxe|HiveOSPXE-hive-os-pxe"
+  "SIlver765/Triple-X|TripleX-triple-x|${STORE_ID}-triple-x|TripleX-triple-x|Triple X"
+  "SIlver765/silvers-hw-monitor|silvers-hw-monitor|${STORE_ID}-hw-monitor|silvers-hw-monitor|Silver's HW Monitor"
+  "SIlver765/Hive-OS-PXE|HiveOSPXE-hive-os-pxe|${STORE_ID}-hive-os-pxe|HiveOSPXE-hive-os-pxe|Hive OS PXE"
 )
 
 sync_one() (
@@ -55,7 +55,7 @@ sync_one() (
 
 failed=()
 for entry in "${APPS[@]}"; do
-  IFS='|' read -r src_repo src_path dest_dir old_prefix <<< "$entry"
+  IFS='|' read -r src_repo src_path dest_dir old_prefix readme_heading <<< "$entry"
   echo "== Syncing $src_repo ($src_path) -> $dest_dir =="
   # Plain statement, not `if sync_one ...` directly - bash only honors the
   # subshell's own `set -e` (stopping at the first failing command inside
@@ -65,6 +65,15 @@ for entry in "${APPS[@]}"; do
   if [ "$rc" -ne 0 ]; then
     echo "!! FAILED syncing $src_repo - see error above. Leaving its existing store copy untouched." >&2
     failed+=("$src_repo")
+    continue
+  fi
+
+  # Keep the README's "## Apps" version badges in sync with what was just
+  # pulled - only touches the "— v..." tail of that app's heading line, not
+  # its link or description.
+  version=$(grep '^version:' "$dest_dir/umbrel-app.yml" | head -1 | sed -E 's/^version: *"?([^"]*)"?.*/\1/')
+  if [ -n "$version" ] && [ -f README.md ]; then
+    sed -i -E "s|^(### \[${readme_heading}\]\([^)]*\)) — .*|\1 — ${version}|" README.md
   fi
 done
 
