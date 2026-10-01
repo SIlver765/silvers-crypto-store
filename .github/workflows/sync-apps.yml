@@ -13,7 +13,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout silvers-crypto-store
+      - name: Checkout Silvers-crypto-store
         uses: actions/checkout@v4
 
       - name: Pull latest app manifests from each app's repo

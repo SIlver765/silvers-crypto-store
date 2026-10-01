@@ -13,7 +13,7 @@
 set -uo pipefail
 
 STORE_ID="silvers-crypto-store"
-STORE_REPO="Silver765/silvers-crypto-store"
+STORE_REPO="Silver765/Silvers-crypto-store"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 

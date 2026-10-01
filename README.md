@@ -8,7 +8,7 @@ On 5tratumOS:
 
 1. Open the **App Store**
 2. Go to **Settings -> Community App Stores -> Add a Store**
-3. Paste: `https://github.com/Silver765/silvers-crypto-store`
+3. Paste: `https://github.com/Silver765/Silvers-crypto-store`
 4. The apps below will appear under "Silver's Crypto Store"
 
 Each app is still developed in its own repository (linked below) — this repo just packages them into one installable store.

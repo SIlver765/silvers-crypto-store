@@ -1,4 +1,4 @@
-# Project rules: Silver's apps on 5tratumOS (store: Silver765/silvers-crypto-store)
+# Project rules: Silver's apps on 5tratumOS (store: Silver765/Silvers-crypto-store)
 
 ## Platform facts (observed on the real machine, 192.168.0.240, host "5tratumos", user "forge")
 - Evidence so far: an `app_proxy` service declared in Hive OS PXE's compose never started (no app_proxy
@@ -27,7 +27,7 @@
    to succeed. Check the package is public.
 4. Read the image digest from the registry and pin `image: ...@sha256:<digest>` in docker-compose.yml.
    Commit and push.
-5. Run the store sync now (`gh workflow run sync-apps.yml --repo Silver765/silvers-crypto-store`) and
+5. Run the store sync now (`gh workflow run sync-apps.yml --repo Silver765/Silvers-crypto-store`) and
    confirm the store copy shows the new version and digest.
 6. Tell the user to update the app in the store UI, then verify per "Definition of done".
 
