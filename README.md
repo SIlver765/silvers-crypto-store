@@ -15,7 +15,7 @@ Each app is still developed in its own repository (linked below) — this repo j
 
 ## Apps
 
-### [Triple X](https://github.com/Silver765/Triple-X) — v1.0-Alpha16
+### [Triple X](https://github.com/Silver765/Triple-X) — v1.0-Alpha17
 Self-hosted Monero full node + [P2Pool](https://github.com/SChernykh/p2pool) node, built from source, with optional Tari (XTM) merge-mining, Monero/Tari wallet management, Discord webhook alerts, and a web dashboard for status, pool stats, and blocks found. Payouts go straight to your own wallet — no third-party pool, no custody, 0% fee.
 **Status:** Alpha · **Stack:** JavaScript
 

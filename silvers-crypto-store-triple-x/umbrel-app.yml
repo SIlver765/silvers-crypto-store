@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha16"
+version: "v1.0-Alpha17"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,25 @@ defaultPassword: ""
 submitter: Silver765
 submission: https://github.com/Silver765/Silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha17: fixes the Pool tab's share-finding math and cleans up its
+  layout. "Last Share" was reading p2pool's rare SIDECHAIN-level share
+  counter (shares_found/last_share_found_time), which can go hours between
+  updates on a home miner even while actively mining - confirmed directly
+  against p2pool's own source (src/stratum_server.cpp) that it only
+  increments inside the m_highEnoughDifficulty branch. Switched it to
+  p2pool's separate total_stratum_shares counter (every accepted share at
+  any difficulty - the same number p2pool's own `status` console command
+  calls "Stratum shares"), now relabeled "Last Stratum Share" and tracked
+  across polls to turn the running count into a real last-activity time.
+  Also adds a "Solo (Your Rig)" block ETA next to the existing pool-wide one
+  (both verified against p2pool.observer's own share-time-calculator
+  formula) since the pool-wide number alone reads as implausibly short for
+  a small miner. Pool tab layout: merged the Hash Rate tile with its history
+  chart, merged "Your P2Pool Stats" with the old ETA-to-Find card and added
+  XTM Blocks Found to it, moved Worker Details next to Network Difficulty
+  History, and removed the separate Tari Merge Mining card and the
+  Worker-Details shares/percentage feature (same sidechain-share-rarity
+  problem as the old Last Share field).
   v1.0-Alpha16: removes the "Automatically stop Minotari (XTM) when unused"
   Settings toggle entirely (lib/minotariLifecycle.js deleted) - this was the
   real cause of minotari-node/minotari-wallet repeatedly showing as degraded
