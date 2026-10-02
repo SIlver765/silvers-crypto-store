@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha17"
+version: "v1.0-Alpha18"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,16 @@ defaultPassword: ""
 submitter: Silver765
 submission: https://github.com/Silver765/Silvers-crypto-store
 releaseNotes: >-
+  v1.0-Alpha18: adds a "P2Pool Share Log" table to the Blocks tab (when each
+  share was found, worker, difficulty, effort, sidechain height - newest
+  first, only shares found from this update on). Fixes fake shares being
+  recorded right after switching pool type: until p2pool finishes syncing
+  the new sidechain it prints "SHARE FOUND" for ordinary low-difficulty
+  shares that never counted, so the dashboard now ignores those lines until
+  p2pool logs "SYNCHRONIZED". Also fixes two phone-width layout bugs: the
+  Pool tab's XTM Blocks Found stat sticking out of its card, and the
+  ALPHA/RUNNING header badges overlapping. Includes everything from the
+  unpublished Alpha17 below.
   v1.0-Alpha17: fixes the Pool tab's share-finding math and cleans up its
   layout. "Last Share" was reading p2pool's rare SIDECHAIN-level share
   counter (shares_found/last_share_found_time), which can go hours between
