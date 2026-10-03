@@ -5,7 +5,7 @@ id: silvers-crypto-store-triple-x
 category: bitcoin # umbrel's App Store schema doesn't have a "monero" category as of writing - change if one exists on your umbrelOS/5tratumOS version
 name: Triple X by Silver
 icon: https://raw.githubusercontent.com/Silver765/Silvers-crypto-store/main/silvers-crypto-store-triple-x/icon.svg
-version: "v1.0-Alpha18"
+version: "v1.2-RC1"
 tagline: Monero + P2Pool + Tari (XTM) merge-mining, one self-hosted dashboard
 description: >-
   Runs a full Monero node (monerod) and a P2Pool node side by side, with a
@@ -32,6 +32,13 @@ defaultPassword: ""
 submitter: Silver765
 submission: https://github.com/Silver765/Silvers-crypto-store
 releaseNotes: >-
+  v1.2-RC1: first release candidate. Blocks tab: the P2Pool Share Log and the
+  P2Pool Observer stats are now merged into the "P2Pool PPLNS Shares Found"
+  box, and a new "Your Lifetime Shares" count is tracked by the dashboard
+  itself (saved across restarts, no Observer needed). Fixes the share filter
+  that could stay on forever after a restart and stop live shares from being
+  logged - it now ends after 10 minutes or when p2pool logs SYNCHRONIZED,
+  whichever comes first. Includes everything from Alpha17 and Alpha18 below.
   v1.0-Alpha18: adds a "P2Pool Share Log" table to the Blocks tab (when each
   share was found, worker, difficulty, effort, sidechain height - newest
   first, only shares found from this update on). Fixes fake shares being
